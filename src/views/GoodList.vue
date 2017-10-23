@@ -9,7 +9,12 @@
         <div class="filter-nav">
           <span class="sortby">排序:</span>
           <a href="javascript:void(0)" class="default cur">默认</a>
-          <a href="javascript:void(0)" class="price">价格 <svg class="icon icon-arrow-short"><use xlink:href="#icon-arrow-short"></use></svg></a>
+          <a href="javascript:void(0)" class="price" v-bind:class="{'sort-up':sortFlag}" @click="sortGoods()">
+            价格
+            <svg class="icon icon-arrow-short">
+              <use xlink:href="#icon-arrow-short"></use>
+            </svg>
+          </a>
           <a href="javascript:void(0)" class="filterby stopPop">过滤</a>
         </div>
         <div class="accessory-result">
@@ -27,13 +32,13 @@
           <div class="accessory-list-wrap">
             <div class="accessory-list col-4">
               <ul>
-                <li>
+                <li v-for="item in goodsList">
                   <div class="pic">
-                    <a href="#"><img src="/static/1.jpg" alt=""></a>
+                    <a href="#"><img v-bind:src="'static/'+item.productImage" alt=""></a>
                   </div>
                   <div class="main">
-                    <div class="name">XX</div>
-                    <div class="price">XX</div>
+                    <div class="name">{{item.productName}}</div>
+                    <div class="price">{{item.salePrice | currency('$')}}</div>
                     <div class="btn-area">
                       <a href="javascript:;" class="btn btn--m">加入购物车</a>
                     </div>
@@ -54,11 +59,124 @@
   import NavHeader from './../components/NavHeader'
   import NavFooter from './../components/NavFooter'
   import NavBread from './../components/NavBread'
+  import axios from 'axios'
   export default {
+    data(){
+      return {
+        goodsList:[],
+        sortFlag:true,
+        page:1,
+        pageSize:8,
+        busy:true,
+        loading:false,
+        mdShow:false,
+        mdShowCart:false,
+        priceFilter:[
+          {
+            startPrice:'0.00',
+            endPrice:'100.00'
+          },
+          {
+            startPrice:'100.00',
+            endPrice:'500.00'
+          },
+          {
+            startPrice:'500.00',
+            endPrice:'1000.00'
+          },
+          {
+            startPrice:'1000.00',
+            endPrice:'5000.00'
+          }
+        ],
+        priceChecked:'all',
+        filterBy:false,
+        overLayFlag:false
+      }
+    },
+    mounted(){
+      this.getGoodsList();
+    },
     components:{
       NavHeader,
       NavFooter,
       NavBread
     },
+    methods:{
+      getGoodsList(flag){
+        var param = {
+          page:this.page,
+          pageSize:this.pageSize,
+          sort:this.sortFlag?1:-1,
+          priceLevel:this.priceChecked
+        };
+        this.loading = true;
+        axios.get("/goods/list",{
+          params:param
+        }).then((response)=>{
+          var res = response.data;
+          this.loading = false;
+          if(res.status=="0"){
+            if(flag){
+              this.goodsList = this.goodsList.concat(res.result.list);
+
+              if(res.result.count==0){
+                this.busy = true;
+              }else{
+                this.busy = false;
+              }
+            }else{
+              this.goodsList = res.result.list;
+              this.busy = false;
+            }
+          }else{
+            this.goodsList = [];
+          }
+        });
+      },
+      sortGoods(){
+        this.sortFlag = !this.sortFlag;
+        this.page = 1;
+        this.getGoodsList();
+      },
+      setPriceFilter(index){
+        this.priceChecked = index;
+        this.page = 1;
+        this.getGoodsList();
+      },
+      loadMore(){
+        this.busy = true;
+        setTimeout(() => {
+          this.page++;
+          this.getGoodsList(true);
+        }, 500);
+      },
+      addCart(productId){
+        axios.post("/goods/addCart",{
+          productId:productId
+        }).then((res)=>{
+          var res = res.data;
+          if(res.status==0){
+            this.mdShowCart = true;
+            this.$store.commit("updateCartCount",1);
+          }else{
+            this.mdShow = true;
+          }
+        });
+      },
+      closeModal(){
+        this.mdShow = false;
+        this.mdShowCart = false;
+      },
+      showFilterPop(){
+        this.filterBy=true;
+        this.overLayFlag=true;
+      },
+      closePop(){
+        this.filterBy=false;
+        this.overLayFlag=false;
+        this.mdShowCart = false;
+      }
+    }
   }
 </script>
