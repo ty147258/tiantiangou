@@ -15,16 +15,20 @@
               <use xlink:href="#icon-arrow-short"></use>
             </svg>
           </a>
-          <a href="javascript:void(0)" class="filterby stopPop">过滤</a>
+          <a href="javascript:void(0)" class="filterby stopPop" @click.stop="showFilterPop">过滤</a>
         </div>
         <div class="accessory-result">
           <!-- filter -->
-          <div class="filter stopPop" id="filter">
+          <div class="filter stopPop" id="filter" v-bind:class="{'filterby-show':filterBy}">
             <dl class="filter-price">
               <dt>价格:</dt>
-              <dd><a href="javascript:void(0)">所有</a></dd>
               <dd>
-                <a href="javascript:void(0)">0 - 100</a>
+                <a href="javascript:void(0)" @click="setPriceFilter('all')" v-bind:class="{'cur':priceChecked=='all'}">
+                  所有
+                </a>
+              </dd>
+              <dd v-for="(item,index) in priceFilter">
+                <a href="javascript:void(0)" @click="setPriceFilter(index)" v-bind:class="{'cur':priceChecked==index}">{{item.startPrice}} - {{item.endPrice}}</a>
               </dd>
             </dl>
           </div>
@@ -50,6 +54,7 @@
         </div>
       </div>
     </div>
+    <div class="md-overlay" v-show="overLayFlag" @click.stop="closePop"></div>
     <nav-footer></nav-footer>
   </div>
 </template>
