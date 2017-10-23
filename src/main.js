@@ -3,10 +3,13 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+//图片的滚动加载
+import infiniteScroll from  'vue-infinite-scroll'
+import {currency} from './util/currency'
 
 Vue.config.productionTip = false
-
-/* eslint-disable no-new */
+Vue.use(infiniteScroll);
+Vue.filter("currency",currency);
 new Vue({
   el: '#app',
   router,
