@@ -157,7 +157,23 @@
         nickName:''
       }
     },
+    mounted(){
+      this.checkLogin();
+    },
     methods:{
+      checkLogin(){
+        axios.get("/users/checkLogin").then((response)=>{
+          var res = response.data;
+          if(res.status=="0"){
+            this.nickName = res.result;
+            this.loginModalFlag = false;
+          }else{
+            if(this.$route.path!="/goods"){
+              this.$router.push("/goods");
+            }
+          }
+        });
+      },
       login(){
         if(!this.userName || !this.userPwd){
           this.errorTip = true;

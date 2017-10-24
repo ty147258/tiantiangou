@@ -9,6 +9,11 @@ export default new Router({
     {
       path: '/',
       component: GoodList
-    }
+    },
+    {
+      path: '/goods',
+      name: 'GoodsList',
+      component: GoodList
+    },
   ]
 })
