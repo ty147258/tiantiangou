@@ -28,9 +28,9 @@
       </div>
       <div class="navbar-right-container" style="display: flex;">
         <div class="navbar-menu-container">
-          <span class="navbar-link"></span>
-          <a href="javascript:void(0)" class="navbar-link" @click="loginModalFlag=true">Login</a>
-          <a href="javascript:void(0)" class="navbar-link">Logout</a>
+          <span class="navbar-link" v-text="nickName" v-if="nickName"></span>
+          <a href="javascript:void(0)" class="navbar-link" @click="loginModalFlag=true" v-if="!nickName">Login</a>
+          <a href="javascript:void(0)" class="navbar-link" v-if="nickName">Logout</a>
           <div class="navbar-cart-container">
             <span class="navbar-cart-count"></span>
             <a class="navbar-link navbar-cart-link" href="/#/cart">
@@ -153,7 +153,8 @@
         userName:'lizhiyuan',
         userPwd:'123456',
         errorTip:false,
-        loginModalFlag:false
+        loginModalFlag:false,
+        nickName:''
       }
     },
     methods:{
@@ -170,8 +171,7 @@
           if(res.status=="0"){
             this.errorTip = false;
             this.loginModalFlag = false;
-            this.$store.commit("updateUserInfo",res.result.userName);
-            this.getCartCount();
+            this.nickName = res.result.userName;
           }else{
             this.errorTip = true;
           }
