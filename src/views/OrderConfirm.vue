@@ -33,7 +33,7 @@
         <!-- process step -->
         <div class="check-step">
           <ul>
-            <li><span>确认</span>地址</li>
+            <li class="cur"><span>确认</span>地址</li>
             <li class="cur"><span>查看</span> 订单</li>
             <li><span>确认</span> 支付</li>
             <li><span>订单</span> 完成</li>
