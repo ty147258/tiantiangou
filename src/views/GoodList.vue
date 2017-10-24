@@ -85,8 +85,6 @@
   </div>
 </template>
 <script>
-  import './../assets/css/base.css'
-  import './../assets/css/product.css'
   import NavHeader from './../components/NavHeader'
   import NavFooter from './../components/NavFooter'
   import NavBread from './../components/NavBread'
@@ -191,7 +189,7 @@
           var res = res.data;
           if(res.status==0){
             this.mdShowCart = true;
-            this.$store.commit("updateCartCount",1);
+            //this.$store.commit("updateCartCount",1);
           }else{
             this.mdShow = true;
           }
